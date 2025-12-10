@@ -1,0 +1,7 @@
+# Eclipse
+bin/
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
