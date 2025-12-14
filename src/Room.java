@@ -25,11 +25,11 @@ public class Room {
     }
     
     
-    public static void updateAvailability() {
+    public static void updateAvailability(Hotel hotel) {
         for (Room room : allRooms) {
             boolean available = true;
 
-            for (Reservation res : Reservation.viewAllReservations()) {
+            for (Reservation res : hotel.getAllReservations()) {
                 if (res.getRoom() == room &&  
                     res.getStatus() == Reservation.ReservationStatus.CONFIRMED) {
                     available = false;
