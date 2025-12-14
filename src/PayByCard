@@ -1,1 +1,50 @@
+public class PayByCard extends Payment {
+
+    private String cardNumber;
+    private String cardOwner;
+    private String expiryDate;
+    private String cvv;
+
+    public PayByCard(String cardNumber, String cardOwner, String expiryDate, String cvv) {
+        super();
+        this.cardNumber = cardNumber;
+        this.cardOwner = cardOwner;
+        this.expiryDate = expiryDate;
+        this.cvv = cvv;
+    }
+
+    @Override
+    public boolean processPayment(double amount) {
+        if (isValidCard()) {
+            System.out.println("Card payment successful!");
+            System.out.println(generateReceipt(amount));
+            recordPayment(); 
+            return true;
+        }
+        System.out.println("Card payment failed!");
+        return false;
+    }
+
+    public boolean isValidCard() {
+        return isExpired() && 
+               cardNumber != null && !cardNumber.isEmpty() &&
+               cardNumber.length() >= 13 && cardNumber.length() <= 16 &&
+               cvv != null && cvv.length() == 3;
+    }
+
+    public boolean isExpired() {
+        try {
+            String[] parts = expiryDate.split("/");
+            int month = Integer.parseInt(parts[0]);
+            int year = Integer.parseInt(parts[1]);
+
+            int currentYear = 25;
+            int currentMonth = 12;
+
+            return (year > currentYear) || (year == currentYear && month >= currentMonth);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+}
 
