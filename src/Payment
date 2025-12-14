@@ -1,1 +1,39 @@
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
+public abstract class Payment {
+
+    private static int nextPaymentId = 100; 
+    private int paymentId;                 
+    private LocalDate paymentDate;
+
+    private static final DateTimeFormatter DATE_FORMATTER =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+    public Payment() {
+        this.paymentId = nextPaymentId++;     
+        this.paymentDate = LocalDate.now();   
+    }
+
+    public abstract boolean processPayment(double amount);
+
+    public String generateReceipt(double amount) {
+        return "Payment ID: " + paymentId +
+               "\nDate: " + paymentDate.format(DATE_FORMATTER) +
+               "\nAmount paid: $" + amount +
+               "\nStatus: Processed";
+    }
+    
+    public void recordPayment() {
+        Hotel.addPayment(this);
+    }
+
+
+    public int getPaymentId() {
+        return paymentId;
+    }
+
+    public LocalDate getPaymentDate() {
+        return paymentDate;
+    }
+}
