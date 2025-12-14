@@ -1,1 +1,36 @@
+public class PayByCash extends Payment {
+    private double amountReceived;
+    private double changeGiven;
+    
+    public PayByCash(double amountReceived) {
+        super();
+        this.amountReceived = amountReceived;
+    }
+    
+    @Override
+    public boolean processPayment(double amount) {
 
+        if (amountReceived >= amount) {
+            changeGiven = amountReceived - amount;
+            System.out.println("Cash payment successful!");
+            System.out.println(generateReceipt(amount));
+            System.out.println("Change given: $" + changeGiven);
+            recordPayment(); 
+            return true;
+        } else {
+            System.out.println("Insufficient cash!The payment is $"+amount);
+            return false;
+        }
+    }
+    
+   
+    
+    
+    public void setAmountReceived(double amountReceived) {
+        this.amountReceived = amountReceived;
+    }
+    
+    public double getChangeGiven() {
+        return changeGiven;
+    }
+}
