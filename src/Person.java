@@ -31,4 +31,11 @@ public abstract class Person {
         }
         this.phoneNumber = phoneNumber;
     }
+
+    @Override
+    public String toString() {
+        return name + " (" + phoneNumber + ")";
+    }
 }
+
+
