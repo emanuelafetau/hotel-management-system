@@ -56,8 +56,25 @@ public class PayByCard extends Payment {
             return true;
         }
     }
+    
 
-    @Override
+    public String getCardNumber() {
+		return cardNumber;
+	}
+
+	public String getCardOwner() {
+		return cardOwner;
+	}
+
+	public String getExpiryDate() {
+		return expiryDate;
+	}
+
+	public String getCvv() {
+		return cvv;
+	}
+
+	@Override
     public String toString() {
         return "PayByCard{" +
                "cardNumber='" + cardNumber + '\'' +
@@ -85,3 +102,4 @@ public class PayByCard extends Payment {
                Objects.equals(cvv, other.cvv);
     }
 }
+
