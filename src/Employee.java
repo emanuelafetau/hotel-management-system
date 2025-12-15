@@ -3,47 +3,43 @@ package Guests;
 public class Employee extends Person {
 
     private static int employeeCounter = 1;
+    private final int employeeId;
+    private String role;
 
-    private int employeeId;
-    private String position;
-    private double salary;
-
-    public Employee(String name, String phoneNumber, String position, double salary) {
+    public Employee(String name, String phoneNumber, String role) {
         super(name, phoneNumber);
         this.employeeId = employeeCounter++;
-        setPosition(position);
-        setSalary(salary);
+        this.role = role;
     }
 
     public int getEmployeeId() {
         return employeeId;
     }
 
-    public String getPosition() {
-        return position;
+    public String getRole() {
+        return role;
     }
 
-    public void setPosition(String position) {
-        if (position == null || position.isBlank()) {
-            throw new IllegalArgumentException("Position cannot be empty.");
-        }
-        this.position = position;
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public double getSalary() {
-        return salary;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Employee)) return false;
+        Employee other = (Employee) obj;
+        return employeeId == other.employeeId;
     }
 
-    public void setSalary(double salary) {
-        if (salary < 0) {
-            throw new IllegalArgumentException("Salary cannot be negative.");
-        }
-        this.salary = salary;
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(employeeId);
     }
 
     @Override
     public String toString() {
-        return "Employee " + employeeId + ": " + name + " (" + position + ", $" + salary + ")";
+        return "Employee #" + employeeId + " - " + super.toString() +
+               " | Role: " + role;
     }
 }
-
