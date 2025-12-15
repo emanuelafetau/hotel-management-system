@@ -29,8 +29,13 @@ public class PayByCash extends Payment {
     public double getChangeGiven() {
         return changeGiven;
     }
+    
 
-    @Override
+    public double getAmountReceived() {
+		return amountReceived;
+	}
+
+	@Override
     public String toString() {
         return "PayByCash{" +
                "amountReceived=" + amountReceived +
@@ -54,3 +59,4 @@ public class PayByCash extends Payment {
                Double.compare(changeGiven, other.changeGiven) == 0;
     }
 }
+
