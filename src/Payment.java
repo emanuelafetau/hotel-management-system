@@ -24,11 +24,11 @@ public abstract class Payment {
         this.invoice = invoice;
     }
 
-    // subclasses decide HOW payment is processed
+    
     public abstract boolean processPayment();
 
     public void recordPayment() {
-        invoice.getReservation().addPayment(this);
+        invoice.addPayment(this);
     }
 
     public Invoice getInvoice() {
@@ -96,3 +96,4 @@ public abstract class Payment {
 	
 	
 	
+
