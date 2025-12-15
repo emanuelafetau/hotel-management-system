@@ -2,26 +2,20 @@ package Guests;
 
 public class Admin extends Employee {
 
-    private boolean hasFullAccess;
-
     public Admin(String name, String phoneNumber, double salary) {
-        super(name, phoneNumber, "Admin", salary);
-        this.hasFullAccess = true;
+        super(name, phoneNumber, salary, "Admin");
     }
 
-    public boolean hasFullAccess() {
-        return hasFullAccess;
-    }
-
-    public void promoteEmployee(Employee e) {
-        System.out.println("Admin " + getName() + " promoted " + e.getName() + "!");
+    public void approveInvoice(Invoice invoice) {
+        // Admin-only action
     }
 
     @Override
     public String toString() {
-        return "Admin: " + getName() + " (Full Access)";
+        return "Admin - " + super.toString();
     }
 }
+
 
 
 
