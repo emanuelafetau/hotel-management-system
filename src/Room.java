@@ -6,7 +6,7 @@ public class Room {
     private static ArrayList<Room> allRooms = new ArrayList<>();
     private static int roomCounter = 100;
     private int roomNumber;
-    private double pricePerNight;
+    private double price;
     private boolean isAvailable;
     
     public enum RoomType {
@@ -15,13 +15,13 @@ public class Room {
     
     private RoomType roomType;
     
-    public Room(int roomNumber, double pricePerNight, RoomType roomType) {
+    public Room(int roomNumber, double price, RoomType roomType) {
         this.roomNumber = roomCounter++;
-        this.pricePerNight = pricePerNight;
+        this.price = price;
         this.isAvailable = true; 
         this.roomType = roomType;
         allRooms.add(this);
-        roomCounter++;
+        
     }
     
     
@@ -53,8 +53,8 @@ public class Room {
         return " Available: " + (isAvailable ? "Yes" : "No");
     }
     
-    public static void displayAllRooms() {
-        updateAvailability(); 
+    public static void displayAllRooms(Hotel hotel) {
+        updateAvailability(hotel); 
         System.out.println("==== 🏨 ROOMS 🏨 ====\n");
         for(Room r : allRooms) {
             System.out.println(r); 
@@ -65,7 +65,7 @@ public class Room {
     
     @Override
     public String toString() {
-        return " Room number # " + roomNumber + "\n Room type: "+ roomType + "\n Price per night --> $" + pricePerNight;
+        return " Room number # " + roomNumber + "\n Room type: "+ roomType + "\n Price per night --> $" + price;
     }
     
     public int getRoomNumber() {
@@ -80,12 +80,12 @@ public class Room {
         Room.roomCounter = roomCounter;
     }
 
-    public double getPricePerNight() {
-        return pricePerNight;
+    public double getPrice() {
+        return price;
     }
     
-    public void setPricePerNight(double pricePerNight) {
-        this.pricePerNight = pricePerNight;
+    public void setPrice(double price) {
+        this.price = price;
     }
     
     public RoomType getRoomType() {
