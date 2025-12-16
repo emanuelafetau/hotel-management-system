@@ -1,186 +1,90 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        System.out.println("======================================");
-        System.out.println("    FILE I/O TESTING PROGRAM");
-        System.out.println("======================================\n");
+        System.out.println("=== Hotel Management System Testing ===\n");
         
-        // ========================================
-        // TEST 1: Write Initial Rooms to Text File
-        // ========================================
-        System.out.println("TEST 1: Writing Initial Rooms to Text File");
-        System.out.println("-------------------------------------------");
+        testFileIO();
         
-        List<Room> initialRooms = new ArrayList<>();
-        initialRooms.add(new Room(101, 99.99, Room.RoomType.SINGLE));
-        initialRooms.add(new Room(102, 149.99, Room.RoomType.DOUBLE));
+        System.out.println("\n" + "=".repeat(50) + "\n");
         
-        System.out.println("Creating " + initialRooms.size() + " rooms:");
-        for (Room r : initialRooms) {
-            System.out.println("  - " + r);
-        }
+        testNightAudit();
+    }
+    
+    private static void testFileIO() {
+        System.out.println("--- FILE I/O TEST ---\n");
         
-        FileIO.writeRoomsToText(initialRooms, "rooms.txt");
-        System.out.println();
+        List<Room> rooms = new ArrayList<>();
+        rooms.add(new Room(101, 99.99, Room.RoomType.SINGLE));
+        rooms.add(new Room(102, 149.99, Room.RoomType.DOUBLE));
+        rooms.add(new Room(201, 249.99, Room.RoomType.SUITE));
         
-        // ========================================
-        // TEST 2: Read Rooms from Text File
-        // ========================================
-        System.out.println("TEST 2: Reading Rooms from Text File");
-        System.out.println("-------------------------------------------");
+        System.out.println("Writing 3 rooms to file...");
+        FileIO.writeRoomsToText(rooms, "rooms.txt");
         
+        // Read rooms back
+        System.out.println("\nReading rooms from file...");
         List<Room> loadedRooms = FileIO.readRoomsFromText("rooms.txt");
-        System.out.println("Loaded " + loadedRooms.size() + " rooms from file");
         FileIO.displayRooms(loadedRooms);
-        System.out.println();
         
-        // ========================================
-        // TEST 3: Append More Rooms to Text File
-        // ========================================
-        System.out.println("TEST 3: Appending More Rooms to Text File");
-        System.out.println("-------------------------------------------");
-        
+        // Append more rooms
         List<Room> moreRooms = new ArrayList<>();
-        moreRooms.add(new Room(201, 249.99, Room.RoomType.SUITE));
         moreRooms.add(new Room(202, 119.99, Room.RoomType.SINGLE));
         
-        System.out.println("Creating " + moreRooms.size() + " more rooms:");
-        for (Room r : moreRooms) {
-            System.out.println("  - " + r);
-        }
-        
+        System.out.println("Appending 1 more room...");
         FileIO.appendRoomsToText(moreRooms, "rooms.txt");
-        System.out.println();
         
-        // ========================================
-        // TEST 4: Read All Rooms from Text File
-        // ========================================
-        System.out.println("TEST 4: Reading All Rooms After Append");
-        System.out.println("-------------------------------------------");
+        List<Room> allRooms = FileIO.readRoomsFromText("rooms.txt");
+        System.out.println("\nTotal rooms in file: " + allRooms.size());
+    }
+    
+    private static void testNightAudit() {
+        System.out.println("--- NIGHT AUDIT TEST ---\n");
         
-        List<Room> allRoomsText = FileIO.readRoomsFromText("rooms.txt");
-        System.out.println("Total rooms in text file: " + allRoomsText.size());
-        FileIO.displayRooms(allRoomsText);
-        System.out.println();
+        Hotel hotel = new Hotel("Grand Plaza Hotel");
         
-        // ========================================
-        // TEST 5: Append Even More Rooms
-        // ========================================
-        System.out.println("TEST 5: Appending Third Batch of Rooms");
-        System.out.println("-------------------------------------------");
+        hotel.addRoom(new Room(101, 100.0, Room.RoomType.SINGLE));
+        hotel.addRoom(new Room(102, 150.0, Room.RoomType.DOUBLE));
+        hotel.addRoom(new Room(201, 200.0, Room.RoomType.SUITE));
+        hotel.addRoom(new Room(202, 120.0, Room.RoomType.SINGLE));
         
-        List<Room> thirdBatch = new ArrayList<>();
-        thirdBatch.add(new Room(301, 179.99, Room.RoomType.DOUBLE));
-        thirdBatch.add(new Room(302, 299.99, Room.RoomType.SUITE));
-        thirdBatch.add(new Room(303, 89.99, Room.RoomType.SINGLE));
+        Guest guest1 = new Guest("John Doe", "123-456-7890");
+        Guest guest2 = new Guest("Jane Smith", "098-765-4321");
+        hotel.addGuest(guest1);
+        hotel.addGuest(guest2);
         
-        System.out.println("Creating " + thirdBatch.size() + " more rooms:");
-        for (Room r : thirdBatch) {
-            System.out.println("  - " + r);
+        Employee auditor = new Employee("Mike Johnson", "555-1234", 50000, "Manager");
+        hotel.addEmployee(auditor);
+        
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+        LocalDate checkOut = tomorrow.plusDays(3);
+        
+        Reservation res1 = hotel.makeReservation(guest1.getGuestId(), 101, tomorrow, checkOut);
+        Reservation res2 = hotel.makeReservation(guest2.getGuestId(), 102, tomorrow, checkOut);
+        
+        
+        if (res1 != null) {
+            Invoice inv1 = hotel.createInvoiceForReservation(res1.getReservationId());
+            
+            PayByCard payment = new PayByCard(inv1, inv1.getAmount(), 
+                "1234567812345678", "John Doe", "12/26", "123");
+            payment.processPayment();
         }
         
-        FileIO.appendRoomsToText(thirdBatch, "rooms.txt");
-        
-        List<Room> finalTextRooms = FileIO.readRoomsFromText("rooms.txt");
-        System.out.println("\nFinal count in text file: " + finalTextRooms.size() + " rooms");
-        FileIO.displayRooms(finalTextRooms);
-        System.out.println();
-        
-        // ========================================
-        // TEST 6: Write to Binary File
-        // ========================================
-        System.out.println("TEST 6: Writing Rooms to Binary File");
-        System.out.println("-------------------------------------------");
-        
-        List<Room> binaryBatch1 = new ArrayList<>();
-        binaryBatch1.add(new Room(401, 129.99, Room.RoomType.SINGLE));
-        binaryBatch1.add(new Room(402, 199.99, Room.RoomType.DOUBLE));
-        
-        System.out.println("Creating " + binaryBatch1.size() + " rooms for binary:");
-        for (Room r : binaryBatch1) {
-            System.out.println("  - " + r);
+        if (res2 != null) {
+            hotel.createInvoiceForReservation(res2.getReservationId());
         }
         
-        FileIO.writeRoomsToBinary(binaryBatch1, "rooms.dat");
-        System.out.println();
+        System.out.println("Performing night audit for tomorrow...\n");
+        NightAudit audit = new NightAudit(hotel, tomorrow, auditor);
+        audit.processEndOfDay();
         
-        // ========================================
-        // TEST 7: Read from Binary File
-        // ========================================
-        System.out.println("TEST 7: Reading from Binary File");
-        System.out.println("-------------------------------------------");
-        
-        List<Room> loadedBinary = FileIO.readRoomsFromBinary("rooms.dat");
-        FileIO.displayRooms(loadedBinary);
-        System.out.println();
-        
-        // ========================================
-        // TEST 8: Append to Binary File
-        // ========================================
-        System.out.println("TEST 8: Appending to Binary File");
-        System.out.println("-------------------------------------------");
-        
-        List<Room> binaryBatch2 = new ArrayList<>();
-        binaryBatch2.add(new Room(403, 279.99, Room.RoomType.SUITE));
-        binaryBatch2.add(new Room(404, 139.99, Room.RoomType.DOUBLE));
-        
-        System.out.println("Creating " + binaryBatch2.size() + " more rooms:");
-        for (Room r : binaryBatch2) {
-            System.out.println("  - " + r);
-        }
-        
-        FileIO.appendRoomsToBinary(binaryBatch2, "rooms.dat");
-        System.out.println();
-        
-        // ========================================
-        // TEST 9: Read All from Binary File
-        // ========================================
-        System.out.println("TEST 9: Reading All Rooms from Binary File");
-        System.out.println("-------------------------------------------");
-        
-        List<Room> allBinaryRooms = FileIO.readRoomsFromBinary("rooms.dat");
-        System.out.println("Total rooms in binary file: " + allBinaryRooms.size());
-        FileIO.displayRooms(allBinaryRooms);
-        System.out.println();
-        
-        // ========================================
-        // TEST 10: Mark Some Rooms as Unavailable
-        // ========================================
-        System.out.println("TEST 10: Modifying Room Availability");
-        System.out.println("-------------------------------------------");
-        
-        List<Room> modifiedRooms = new ArrayList<>();
-        Room r1 = new Room(501, 159.99, Room.RoomType.DOUBLE);
-        Room r2 = new Room(502, 159.99, Room.RoomType.DOUBLE);
-        r2.setAvailable(false); // Mark as unavailable
-        
-        modifiedRooms.add(r1);
-        modifiedRooms.add(r2);
-        
-        System.out.println("Writing rooms with different availability:");
-        for (Room r : modifiedRooms) {
-            System.out.println("  - Room " + r.getRoomNumber() + 
-                             " (Available: " + r.isAvailable() + ")");
-        }
-        
-        FileIO.writeRoomsToText(modifiedRooms, "modified_rooms.txt");
-        
-        List<Room> loadedModified = FileIO.readRoomsFromText("modified_rooms.txt");
-        System.out.println("\nReading back modified rooms:");
-        FileIO.displayRooms(loadedModified);
-        
-        // ========================================
-        // SUMMARY
-        // ========================================
-        System.out.println("\n======================================");
-        System.out.println("         TEST SUMMARY");
-        System.out.println("======================================");
-        System.out.println("✓ Text file (rooms.txt): " + finalTextRooms.size() + " rooms");
-        System.out.println("✓ Binary file (rooms.dat): " + allBinaryRooms.size() + " rooms");
-        System.out.println("✓ Modified file (modified_rooms.txt): " + loadedModified.size() + " rooms");
-        System.out.println("\n✓ All File I/O operations completed successfully!");
-        System.out.println("======================================\n");
+        System.out.println("\n--- Audit Summary ---");
+        System.out.println("Total Revenue: $" + String.format("%.2f", audit.getTotalRevenue()));
+        System.out.println("Occupancy Rate: " + String.format("%.2f", audit.getOccupancyRate()) + "%");
+        System.out.println("Unpaid Invoices: " + audit.getUnpaidInvoicesCount());
     }
 }

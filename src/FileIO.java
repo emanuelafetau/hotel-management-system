@@ -57,7 +57,7 @@ public class FileIO {
         return room;
     }
    
-    // OVERWRITES the entire file
+    
     public static void writeRoomsToText(List<Room> rooms, String filename) {
         if (rooms == null || rooms.isEmpty()) return;
        
@@ -77,16 +77,16 @@ public class FileIO {
         }
     }
     
-    // APPENDS new rooms to existing file
+    
     public static void appendRoomsToText(List<Room> rooms, String filename) {
         if (rooms == null || rooms.isEmpty()) return;
         
-        // Check if file exists and has content
+        
         File file = new File(filename);
         boolean fileExists = file.exists() && file.length() > 0;
        
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
-            // If file doesn't exist or is empty, write header
+           
             if (!fileExists) {
                 writer.write("RoomNumber,Price,RoomType,IsAvailable");
                 writer.newLine();
@@ -123,7 +123,7 @@ public class FileIO {
         return rooms;
     }
    
-    // OVERWRITES the entire binary file
+    
     public static void writeRoomsToBinary(List<Room> rooms, String filename) {
         if (rooms == null || rooms.isEmpty()) return;
        
@@ -136,17 +136,14 @@ public class FileIO {
         }
     }
     
-    // APPENDS new rooms to existing binary file
+    
     public static void appendRoomsToBinary(List<Room> newRooms, String filename) {
         if (newRooms == null || newRooms.isEmpty()) return;
         
-        // First read existing rooms
         List<Room> existingRooms = readRoomsFromBinary(filename);
         
-        // Add new rooms to existing list
         existingRooms.addAll(newRooms);
         
-        // Write all rooms back
         writeRoomsToBinary(existingRooms, filename);
         System.out.println("Successfully appended " + newRooms.size() + " new rooms (total: " + existingRooms.size() + ")");
     }

@@ -14,9 +14,3 @@ public class Admin extends Employee {
         return "Admin - " + super.toString();
     }
 }
-
-
-
-
-
-

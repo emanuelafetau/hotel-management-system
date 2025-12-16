@@ -1,3 +1,0 @@
-RoomNumber,Price,RoomType,IsAvailable
-501,159.99,DOUBLE,true
-502,159.99,DOUBLE,false
