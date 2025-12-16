@@ -5,43 +5,22 @@ public class Employee extends Person {
 
     private final int employeeId;
     private double salary;
-    private String position;
+    private String role;
 
-    public Employee(String name, String phoneNumber, double salary, String position) {
+    public Employee(String name, String phoneNumber, double salary, String role) {
         super(name, phoneNumber);
-
-        if (salary <= 0) {
-            throw new IllegalArgumentException("Salary must be positive.");
-        }
-
+        if (salary <= 0) throw new IllegalArgumentException("Salary must be positive.");
         this.employeeId = employeeCounter++;
         this.salary = salary;
-        this.position = position;
+        this.role = role;
     }
 
-    public int getEmployeeId() {
-        return employeeId;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
-    public void setSalary(double salary) {
-        if (salary <= 0) {
-            throw new IllegalArgumentException("Salary must be positive.");
-        }
-        this.salary = salary;
-    }
-
-    public String getPosition() {
-        return position;
-    }
+    public int getEmployeeId() { return employeeId; }
+    public double getSalary() { return salary; }
+    public String getRole() { return role; }
 
     @Override
     public String toString() {
-        return "Employee #" + employeeId + " - " + super.toString()
-               + ", Position: " + position
-               + ", Salary: $" + salary;
+        return role + " - " + super.toString();
     }
 }

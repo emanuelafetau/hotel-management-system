@@ -6,7 +6,7 @@ public class Admin extends Employee {
     }
 
     public void approveInvoice(Invoice invoice) {
-        // Admin-only action
+        
     }
 
     @Override
@@ -14,6 +14,7 @@ public class Admin extends Employee {
         return "Admin - " + super.toString();
     }
 }
+
 
 
 
