@@ -196,16 +196,17 @@ public class Hotel {
         return new ArrayList<>(invoices); 
     }
 
-    public double calculateDailyRevenueFor(LocalDate date) {
-        double totalRevenue = 0;
-        for (Invoice inv : invoices) {
-            if (inv.getStatus() == Invoice.InvoiceStatus.PAID && inv.coversDate(date)) {
-                double dailyAmount = inv.getAmount() / inv.getNights();
-                totalRevenue += dailyAmount;
-            }
+   public double calculateDailyRevenueFor(LocalDate date) {
+    double totalRevenue = 0;
+    for (Invoice inv : invoices) {
+        if (inv.getStatus() == Invoice.InvoiceStatus.PAID && 
+            inv.getReservation().isActiveOn(date)) {
+            double dailyAmount = inv.getAmount() / inv.getNights();
+            totalRevenue += dailyAmount;
         }
-        return totalRevenue;
     }
+    return totalRevenue;
+}
 
     public int countOccupiedRoomsOn(LocalDate date) {
         int count = 0;
