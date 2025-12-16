@@ -50,6 +50,19 @@ public class Guest extends Person {
         return new ArrayList<>(preferences);
     }
 
+      @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Guest)) return false;
+        Guest guest = (Guest) o;
+        return guestId == guest.guestId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(guestId);
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -62,4 +75,5 @@ public class Guest extends Person {
         );
     }
 }
+
 
