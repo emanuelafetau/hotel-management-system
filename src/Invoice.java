@@ -1,21 +1,22 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 
 public class Invoice {
-    public enum InvoiceStatus 
-    { PAID, UNPAID }
-
+    public enum InvoiceStatus { PAID, UNPAID }
+    
     private static int invoiceCounter = 1;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
+    
     private final int invoiceId;
     private final Reservation reservation;
     private final LocalDate issueDate;
     private final long nights;
     private final double amount;
     private InvoiceStatus status;
-
+    private final ArrayList<Payment> payments = new ArrayList<>();
+    
     public Invoice(Reservation reservation) {
         validateReservation(reservation);
         
@@ -26,7 +27,7 @@ public class Invoice {
         this.amount = nights * reservation.getRoom().getPrice();
         this.status = InvoiceStatus.UNPAID;
     }
-
+    
     private void validateReservation(Reservation reservation) {
         if (reservation == null) {
             throw new IllegalArgumentException("Reservation cannot be null.");
@@ -34,20 +35,37 @@ public class Invoice {
         if (reservation.getStatus() == Reservation.ReservationStatus.CANCELLED) {
             throw new IllegalArgumentException("Cannot create invoice for cancelled reservation.");
         }
-        
-        if (!reservation.getCheckOutDate().isAfter(reservation.getCheckInDate())) {
-            throw new IllegalArgumentException("Invalid reservation dates.");
+    }
+    
+    public void addPayment(Payment payment) {
+        if (payment == null) {
+            throw new IllegalArgumentException("Payment cannot be null.");
+        }
+        if (payment.getInvoice() != this) {
+            throw new IllegalArgumentException("Payment does not belong to this invoice.");
+        }
+        payments.add(payment);
+        updateStatus();
+    }
+    
+    private void updateStatus() {
+        if (getTotalPaid() >= amount) {
+            status = InvoiceStatus.PAID;
         }
     }
-
-    public void markAsPaid() { 
-        status = InvoiceStatus.PAID; 
+    
+    public double getTotalPaid() {
+        double total = 0;
+        for (Payment p : payments) {
+            total += p.getAmount();
+        }
+        return total;
     }
-
-    public boolean coversDate(LocalDate date) {
-        return reservation.isActiveOn(date);
+    
+    public ArrayList<Payment> getPayments() {
+        return new ArrayList<>(payments);
     }
-
+    
     public int getInvoiceId() { return invoiceId; }
     public Reservation getReservation() { return reservation; }
     public Guest getGuest() { return reservation.getGuest(); }
@@ -56,7 +74,7 @@ public class Invoice {
     public double getAmount() { return amount; }
     public long getNights() { return nights; }
     public InvoiceStatus getStatus() { return status; }
-
+    
     public void printInvoice() {
         System.out.println("========================================");
         System.out.println("              INVOICE");
@@ -75,7 +93,7 @@ public class Invoice {
         System.out.println("Status: " + status);
         System.out.println("========================================");
     }
-
+    
     @Override
     public String toString() {
         return String.format(
