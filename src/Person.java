@@ -1,4 +1,3 @@
-package Guests;
 
 public abstract class Person {
 

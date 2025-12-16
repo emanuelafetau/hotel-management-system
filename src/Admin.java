@@ -1,4 +1,3 @@
-package Guests;
 
 public class Admin extends Employee {
 

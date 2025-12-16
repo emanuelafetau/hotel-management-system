@@ -11,20 +11,18 @@ public class PayByCash extends Payment {
     }
 
     @Override
-    public boolean processPayment() {
-        if (amountReceived >= getAmount()) {
-            changeGiven = amountReceived - getAmount();
-            recordPayment();
-            getInvoice().markAsPaid();
-            System.out.println("Cash payment successful!");
-            System.out.println(generateReceipt());
-            System.out.printf("Change given: $%.2f%n", changeGiven);
-
-            return true;
-        }
-        System.out.println("Insufficient cash!");
-        return false;
+public boolean processPayment() {
+    if (amountReceived >= getAmount()) {
+        changeGiven = amountReceived - getAmount();
+        getInvoice().addPayment(this);  // <-- Changed line
+        System.out.println("Cash payment successful!");
+        System.out.println(generateReceipt());
+        System.out.printf("Change given: $%.2f%n", changeGiven);
+        return true;
     }
+    System.out.println("Insufficient cash!");
+    return false;
+}
 
     public double getChangeGiven() {
         return changeGiven;

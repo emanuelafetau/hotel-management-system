@@ -1,0 +1,5 @@
+RoomNumber,Price,RoomType,IsAvailable
+101,100.00,SINGLE,true
+102,150.00,DOUBLE,true
+201,200.00,SUITE,true
+202,120.00,SINGLE,true

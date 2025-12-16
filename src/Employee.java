@@ -1,4 +1,3 @@
-package Guests;
 
 public class Employee extends Person {
 

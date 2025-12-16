@@ -19,18 +19,17 @@ public class PayByCard extends Payment {
         this.cvv = cvv;
     }
 
-    @Override
-    public boolean processPayment() {
-        if (isValidCard()) {
-            recordPayment();
-            getInvoice().markAsPaid();
-            System.out.println("Card payment successful!");
-            System.out.println(generateReceipt());
-            return true;
-        }
-        System.out.println("Card payment failed!");
-        return false;
+   @Override
+public boolean processPayment() {
+    if (isValidCard()) {
+        getInvoice().addPayment(this);  // Use Invoice's addPayment method
+        System.out.println("Card payment successful!");
+        System.out.println(generateReceipt());
+        return true;
     }
+    System.out.println("Card payment failed!");
+    return false;
+}
 
     private boolean isValidCard() {
         return !isExpired()
