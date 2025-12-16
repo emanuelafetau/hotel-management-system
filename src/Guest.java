@@ -1,7 +1,6 @@
-package Guests; 
 
 import java.util.ArrayList;
-import java.util.Objects;
+import java.util.List;
 
 public class Guest extends Person {
 
@@ -63,3 +62,4 @@ public class Guest extends Person {
         );
     }
 }
+
