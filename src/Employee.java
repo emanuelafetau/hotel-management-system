@@ -4,30 +4,24 @@ public class Employee extends Person {
 
     private static int employeeCounter = 1;
 
-    private int employeeId;
-    private String position;
+    private final int employeeId;
     private double salary;
+    private String position;
 
-    public Employee(String name, String phoneNumber, String position, double salary) {
+    public Employee(String name, String phoneNumber, double salary, String position) {
         super(name, phoneNumber);
+
+        if (salary <= 0) {
+            throw new IllegalArgumentException("Salary must be positive.");
+        }
+
         this.employeeId = employeeCounter++;
-        setPosition(position);
-        setSalary(salary);
+        this.salary = salary;
+        this.position = position;
     }
 
     public int getEmployeeId() {
         return employeeId;
-    }
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        if (position == null || position.isBlank()) {
-            throw new IllegalArgumentException("Position cannot be empty.");
-        }
-        this.position = position;
     }
 
     public double getSalary() {
@@ -35,15 +29,20 @@ public class Employee extends Person {
     }
 
     public void setSalary(double salary) {
-        if (salary < 0) {
-            throw new IllegalArgumentException("Salary cannot be negative.");
+        if (salary <= 0) {
+            throw new IllegalArgumentException("Salary must be positive.");
         }
         this.salary = salary;
     }
 
+    public String getPosition() {
+        return position;
+    }
+
     @Override
     public String toString() {
-        return "Employee " + employeeId + ": " + name + " (" + position + ", $" + salary + ")";
+        return "Employee #" + employeeId + " - " + super.toString()
+               + ", Position: " + position
+               + ", Salary: $" + salary;
     }
 }
-
