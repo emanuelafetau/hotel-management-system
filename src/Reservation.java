@@ -1,7 +1,10 @@
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class Reservation {
+public class Reservation implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     public enum ReservationStatus {
         CONFIRMED,
         CANCELLED

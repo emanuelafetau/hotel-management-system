@@ -1,5 +1,0 @@
-RoomNumber,Price,RoomType,IsAvailable
-101,99.99,SINGLE,true
-102,149.99,DOUBLE,true
-201,249.99,SUITE,true
-202,119.99,SINGLE,true

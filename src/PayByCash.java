@@ -1,28 +1,34 @@
+import java.io.Serializable;
 import java.util.Objects;
 
-public class PayByCash extends Payment {
-
+public class PayByCash extends Payment implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private double amountReceived;
     private double changeGiven;
+    
+    // Store invoice reference temporarily during processing (transient = not saved)
+    private transient Invoice invoice;
 
     public PayByCash(Invoice invoice, double amount, double amountReceived) {
         super(invoice, amount);
+        this.invoice = invoice;
         this.amountReceived = amountReceived;
     }
 
     @Override
-public boolean processPayment() {
-    if (amountReceived >= getAmount()) {
-        changeGiven = amountReceived - getAmount();
-        getInvoice().addPayment(this);  // <-- Changed line
-        System.out.println("Cash payment successful!");
-        System.out.println(generateReceipt());
-        System.out.printf("Change given: $%.2f%n", changeGiven);
-        return true;
+    public boolean processPayment() {
+        if (amountReceived >= getAmount() && invoice != null) {
+            changeGiven = amountReceived - getAmount();
+            invoice.addPayment(this);
+            System.out.println("Cash payment successful!");
+            System.out.println(generateReceipt());
+            System.out.printf("Change given: $%.2f%n", changeGiven);
+            return true;
+        }
+        System.out.println("Insufficient cash!");
+        return false;
     }
-    System.out.println("Insufficient cash!");
-    return false;
-}
 
     public double getChangeGiven() {
         return changeGiven;

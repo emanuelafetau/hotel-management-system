@@ -1,6 +1,8 @@
+import java.io.Serializable;
 
-public abstract class Person {
-
+public abstract class Person implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     protected String name;
     protected String phoneNumber;
 

@@ -1,13 +1,18 @@
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-public abstract class Payment {
+public abstract class Payment implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private static int nextPaymentId = 100;
     private final int paymentId;
     private final LocalDate paymentDate;
     private final double amount;
-    private final Invoice invoice;
+    
+    // Store only invoice ID instead of full Invoice reference to avoid circular dependency issues
+    private final int invoiceId;
     
     protected static final DateTimeFormatter DATE_FORMATTER =
             DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -23,17 +28,14 @@ public abstract class Payment {
         this.paymentId = nextPaymentId++;
         this.paymentDate = LocalDate.now();
         this.amount = amount;
-        this.invoice = invoice;
+        this.invoiceId = invoice.getInvoiceId();
     }
     
     public abstract boolean processPayment();
     
-    public void recordPayment() {
-        invoice.addPayment(this);
-    }
-    
-    public Invoice getInvoice() {
-        return invoice;
+    // Get invoice ID instead of full invoice object
+    public int getInvoiceId() {
+        return invoiceId;
     }
     
     public double getAmount() {
@@ -41,21 +43,16 @@ public abstract class Payment {
     }
     
     public String generateReceipt() {
-        Reservation reservation = invoice.getReservation();
         return """
                Payment ID: %d
                Date: %s
-               Reservation ID: %d
-               Guest ID: %d
+               Invoice ID: %d
                Amount paid: $%.2f
-               Invoice Status: %s
                """.formatted(
                 paymentId,
                 paymentDate.format(DATE_FORMATTER),
-                reservation.getReservationId(),
-                reservation.getGuest().getGuestId(),
-                amount,
-                invoice.getStatus()
+                invoiceId,
+                amount
         );
     }
     
@@ -72,7 +69,7 @@ public abstract class Payment {
         return "Payment{id=" + paymentId +
                ", date=" + paymentDate +
                ", amount=" + amount +
-               ", invoiceId=" + invoice.getInvoiceId() +
+               ", invoiceId=" + invoiceId +
                "}";
     }
     

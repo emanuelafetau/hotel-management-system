@@ -1,5 +1,4 @@
 import java.io.Serializable;
-import java.time.LocalDate;
 
 public class Room implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -14,18 +13,11 @@ public class Room implements Serializable {
     
     private RoomType roomType;
     
-    // Constructor with roomNumber parameter provided by user
     public Room(int roomNumber, double price, RoomType roomType) {
         this.roomNumber = roomNumber;
         this.price = price;
         this.isAvailable = true; 
         this.roomType = roomType;
-    }
-    
-    // Check if room is available for specific date range
-    public boolean isAvailableForDates(LocalDate checkIn, LocalDate checkOut, Hotel hotel) {
-        // Implementation for date checking
-        return isAvailable;
     }
     
     public boolean isAvailable() {

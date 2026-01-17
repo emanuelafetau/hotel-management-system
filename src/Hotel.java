@@ -1,31 +1,33 @@
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Hotel {
+public class Hotel implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private String hotelName;
-    private final ArrayList<Guest> guests = new ArrayList<>();
-    private final ArrayList<Room> rooms = new ArrayList<>();
-    private final ArrayList<Reservation> reservations = new ArrayList<>();
-    private final ArrayList<Employee> staff = new ArrayList<>();
-    private final ArrayList<Invoice> invoices = new ArrayList<>();
+    private final Map<Integer, Guest> guests = new HashMap<>();
+    private final Map<Integer, Room> rooms = new HashMap<>();
+    private final Map<Integer, Reservation> reservations = new HashMap<>();
+    private final Map<Integer, Employee> staff = new HashMap<>();
+    private final Map<Integer, Invoice> invoices = new HashMap<>();
 
     public Hotel(String hotelName) { 
         this.hotelName = hotelName; 
     }
 
     public boolean addGuest(Guest guest) {
-        if (guest == null || findGuest(guest.getGuestId()) != null) {
+        if (guest == null || guests.containsKey(guest.getGuestId())) {
             return false;
         }
-        guests.add(guest);
+        guests.put(guest.getGuestId(), guest);
         return true;
     }
 
     public Guest findGuest(int guestId) {
-        for (Guest g : guests) {
-            if (g.getGuestId() == guestId) return g;
-        }
-        return null;
+        return guests.get(guestId);
     }
 
     public boolean removeGuest(int guestId) {
@@ -36,12 +38,13 @@ public class Hotel {
             return false;
         }
         
-        return guests.remove(guest);
+        guests.remove(guestId);
+        return true;
     }
 
     private boolean hasActiveFutureReservations(Guest guest) {
         LocalDate today = LocalDate.now();
-        for (Reservation r : reservations) {
+        for (Reservation r : reservations.values()) {
             if (r.getGuest().equals(guest) && 
                 r.isActive() && 
                 r.getCheckOutDate().isAfter(today)) {
@@ -52,25 +55,22 @@ public class Hotel {
     }
 
     public ArrayList<Guest> getAllGuests() { 
-        return new ArrayList<>(guests); 
+        return new ArrayList<>(guests.values()); 
     }
 
     public boolean addRoom(Room room) {
-        if (room == null || findRoom(room.getRoomNumber()) != null) {
+        if (room == null || rooms.containsKey(room.getRoomNumber())) {
             return false;
         }
         if (room.getPrice() <= 0) {
             return false; 
         }
-        rooms.add(room);
+        rooms.put(room.getRoomNumber(), room);
         return true;
     }
 
     public Room findRoom(int roomNumber) {
-        for (Room r : rooms) {
-            if (r.getRoomNumber() == roomNumber) return r;
-        }
-        return null;
+        return rooms.get(roomNumber);
     }
 
     public boolean removeRoom(int roomNumber) {
@@ -81,12 +81,13 @@ public class Hotel {
             return false;
         }
         
-        return rooms.remove(room);
+        rooms.remove(roomNumber);
+        return true;
     }
 
     private boolean hasActiveFutureReservations(Room room) {
         LocalDate today = LocalDate.now();
-        for (Reservation r : reservations) {
+        for (Reservation r : reservations.values()) {
             if (r.getRoom().equals(room) && 
                 r.isActive() && 
                 r.getCheckOutDate().isAfter(today)) {
@@ -97,12 +98,12 @@ public class Hotel {
     }
 
     public ArrayList<Room> getAllRooms() { 
-        return new ArrayList<>(rooms); 
+        return new ArrayList<>(rooms.values()); 
     }
 
     public ArrayList<Room> getAvailableRooms(LocalDate checkIn, LocalDate checkOut) {
         ArrayList<Room> available = new ArrayList<>();
-        for (Room room : rooms) {
+        for (Room room : rooms.values()) {
             if (isRoomAvailable(room, checkIn, checkOut)) {
                 available.add(room);
             }
@@ -124,7 +125,7 @@ public class Hotel {
 
         try {
             Reservation reservation = new Reservation(guest, room, checkInDate, checkOutDate);
-            reservations.add(reservation);
+            reservations.put(reservation.getReservationId(), reservation);
             return reservation;
         } catch (IllegalArgumentException e) {
             return null;
@@ -137,19 +138,16 @@ public class Hotel {
     }
 
     public Reservation findReservation(int reservationId) {
-        for (Reservation r : reservations) {
-            if (r.getReservationId() == reservationId) return r;
-        }
-        return null;
+        return reservations.get(reservationId);
     }
 
     public ArrayList<Reservation> getAllReservations() { 
-        return new ArrayList<>(reservations); 
+        return new ArrayList<>(reservations.values()); 
     }
 
     public ArrayList<Reservation> getActiveReservations() {
         ArrayList<Reservation> active = new ArrayList<>();
-        for (Reservation r : reservations) {
+        for (Reservation r : reservations.values()) {
             if (r.isActive()) {
                 active.add(r);
             }
@@ -158,7 +156,7 @@ public class Hotel {
     }
 
     private boolean isRoomAvailable(Room room, LocalDate checkIn, LocalDate checkOut) {
-        for (Reservation r : reservations) {
+        for (Reservation r : reservations.values()) {
             if (r.getRoom().equals(room) && r.overlaps(checkIn, checkOut)) {
                 return false;
             }
@@ -175,7 +173,7 @@ public class Hotel {
         
         try {
             Invoice invoice = new Invoice(reservation);
-            invoices.add(invoice);
+            invoices.put(invoice.getInvoiceId(), invoice);
             return invoice;
         } catch (IllegalArgumentException e) {
             return null;
@@ -184,7 +182,7 @@ public class Hotel {
 
     public boolean hasInvoiceForReservation(Reservation reservation) {
         if (reservation == null) return false;
-        for (Invoice inv : invoices) {
+        for (Invoice inv : invoices.values()) {
             if (inv.getReservation().equals(reservation)) {
                 return true;
             }
@@ -193,26 +191,26 @@ public class Hotel {
     }
 
     public ArrayList<Invoice> getAllInvoices() { 
-        return new ArrayList<>(invoices); 
+        return new ArrayList<>(invoices.values()); 
     }
 
-   public double calculateDailyRevenueFor(LocalDate date) {
-    double totalRevenue = 0;
-    for (Invoice inv : invoices) {
-        if (inv.getStatus() == Invoice.InvoiceStatus.PAID && 
-            inv.getReservation().isActiveOn(date)) {
-            double dailyAmount = inv.getAmount() / inv.getNights();
-            totalRevenue += dailyAmount;
+    public double calculateDailyRevenueFor(LocalDate date) {
+        double totalRevenue = 0;
+        for (Invoice inv : invoices.values()) {
+            if (inv.getStatus() == Invoice.InvoiceStatus.PAID && 
+                inv.getReservation().isActiveOn(date)) {
+                double dailyAmount = inv.getAmount() / inv.getNights();
+                totalRevenue += dailyAmount;
+            }
         }
+        return totalRevenue;
     }
-    return totalRevenue;
-}
 
     public int countOccupiedRoomsOn(LocalDate date) {
         int count = 0;
-        for (Room room : rooms) {
+        for (Room room : rooms.values()) {
             boolean isOccupied = false;
-            for (Reservation r : reservations) {
+            for (Reservation r : reservations.values()) {
                 if (r.getRoom().equals(room) && r.isActiveOn(date)) {
                     isOccupied = true;
                     break;
@@ -227,22 +225,19 @@ public class Hotel {
 
     public boolean addEmployee(Employee employee) {
         if (employee == null) return false;
-        if (findEmployee(employee.getEmployeeId()) != null) {
+        if (staff.containsKey(employee.getEmployeeId())) {
             return false;
         }
-        staff.add(employee);
+        staff.put(employee.getEmployeeId(), employee);
         return true;
     }
 
     public Employee findEmployee(int employeeId) {
-        for (Employee e : staff) {
-            if (e.getEmployeeId() == employeeId) return e;
-        }
-        return null;
+        return staff.get(employeeId);
     }
 
     public ArrayList<Employee> getAllEmployees() { 
-        return new ArrayList<>(staff); 
+        return new ArrayList<>(staff.values()); 
     }
 
     public String getHotelName() { return hotelName; }

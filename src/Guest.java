@@ -1,103 +1,78 @@
-
+import java.io.Serializable;
 import java.util.ArrayList;
-
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class Guest extends Person {
-
-    private static int guestCounter = 1;
-    private static final ArrayList<Guest> allGuests = new ArrayList<>();
-
+public class Guest extends Person implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final int guestId;
-    private boolean checkedIn;
-    private final ArrayList<String> preferences;
-
-    public Guest(String name, String phoneNumber) {
+    private String email;
+    private final List<String> preferences;
+    
+    public Guest(int guestId, String name, String phoneNumber, String email) {
         super(name, phoneNumber);
-        this.guestId = guestCounter++;
-        this.checkedIn = false;
+        this.guestId = guestId;
+        setEmail(email);
         this.preferences = new ArrayList<>();
-        allGuests.add(this);
     }
-
-
-    public static ArrayList<Guest> viewAllGuests() {
-        return new ArrayList<>(allGuests);
-    }
-
-    public static Guest findGuestById(int guestId) {
-        for (Guest g : allGuests) {
-            if (g.guestId == guestId) return g;
-        }
-        return null;
-    }
-
-
+    
     public int getGuestId() {
         return guestId;
     }
-
-    public boolean isCheckedIn() {
-        return checkedIn;
+    
+    public String getEmail() {
+        return email;
     }
-
-    public void checkIn() {
-        if (checkedIn) {
-            throw new IllegalStateException("Guest is already checked in.");
+    
+    public void setEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException("Email cannot be empty.");
         }
-        checkedIn = true;
-    }
-
-    public void checkOut() {
-        if (!checkedIn) {
-            throw new IllegalStateException("Guest is not currently checked in.");
+        if (!email.contains("@")) {
+            throw new IllegalArgumentException("Invalid email format.");
         }
-        checkedIn = false;
+        this.email = email;
     }
-
-
-    public ArrayList<String> getPreferences() {
+    
+    public List<String> getPreferences() {
         return new ArrayList<>(preferences);
     }
-
+    
     public void addPreference(String preference) {
-        if (preference == null || preference.isBlank()) {
-            throw new IllegalArgumentException("Preference cannot be empty.");
+        if (preference != null && !preference.isBlank()) {
+            preferences.add(preference);
         }
-        preferences.add(preference);
     }
-
+    
     public boolean removePreference(String preference) {
         return preferences.remove(preference);
     }
-
+    
+    public boolean hasPreference(String preference) {
+        return preferences.contains(preference);
+    }
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
-        if (!(obj instanceof Guest)) return false;
-        Guest other = (Guest) obj;
-        return guestId == other.guestId;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Guest guest = (Guest) obj;
+        return guestId == guest.guestId;
     }
-
+    
     @Override
     public int hashCode() {
         return Objects.hash(guestId);
     }
-
-    public void viewDetails() {
-        System.out.println("========== Guest Details ==========");
-        System.out.println("Guest ID: " + guestId);
-        System.out.println("Name: " + name);
-        System.out.println("Phone: " + phoneNumber);
-        System.out.println("Checked In: " + (checkedIn ? "Yes" : "No"));
-        System.out.println("Preferences: " +
-                (preferences.isEmpty() ? "None" : preferences));
-        System.out.println("===================================");
+    
+    public String getDisplayInfo() {
+        return String.format("%s (ID: %d)%nPhone: %s%nEmail: %s", 
+            getName(), guestId, getPhoneNumber(), email);
     }
-
+    
     @Override
     public String toString() {
-        return "Guest " + guestId + " - " + super.toString();
+        return String.format("Guest[ID=%d, Name=%s]", guestId, getName());
     }
 }

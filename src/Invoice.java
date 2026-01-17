@@ -1,9 +1,12 @@
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
-public class Invoice {
+public class Invoice implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
     public enum InvoiceStatus { PAID, UNPAID }
     
     private static int invoiceCounter = 1;
@@ -41,7 +44,8 @@ public class Invoice {
         if (payment == null) {
             throw new IllegalArgumentException("Payment cannot be null.");
         }
-        if (payment.getInvoice() != this) {
+        // Check if payment belongs to this invoice using invoiceId
+        if (payment.getInvoiceId() != this.invoiceId) {
             throw new IllegalArgumentException("Payment does not belong to this invoice.");
         }
         payments.add(payment);
