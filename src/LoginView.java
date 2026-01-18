@@ -10,8 +10,13 @@ import javafx.scene.paint.Color;
 
 public class LoginView {
 
+    // Option 1: Use online image (current)
     private static final String HERO_IMAGE_URL = 
-            "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&h=900&fit=crop"; // Luxury hotel lobby
+            "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=900&h=900&fit=crop";
+    
+    // Option 2: Use local image - uncomment this and comment the line above
+    // Put your image in the same folder as your .java files
+    // private static final String HERO_IMAGE_URL = "file:hotel-lobby.jpg";
 
     private final Hotel hotel;
     private final SceneNavigator navigator;
@@ -36,7 +41,7 @@ public class LoginView {
         BorderPane card = new BorderPane();
         card.getStyleClass().add("card");
         card.setMaxWidth(980);
-        card.setPrefHeight(460);
+        card.setPrefHeight(600);  // Increased height to match image
 
         DropShadow shadow = new DropShadow();
         shadow.setRadius(28);
@@ -62,13 +67,20 @@ public class LoginView {
         left.setMinWidth(360);
         left.getStyleClass().add("left-panel");
 
+        // Image that fills the entire height
         ImageView hero = new ImageView(new Image(HERO_IMAGE_URL, true));
         hero.setPreserveRatio(false);
         hero.setFitWidth(420);
-        hero.setFitHeight(460);
+        hero.setFitHeight(600);  // Match the card height
+        
+        // Clip image to have rounded corners on left side only
+        hero.setClip(createLeftRoundedClip(420, 600));
 
+        // Solid overlay - also clipped to match
         Region overlay = new Region();
         overlay.getStyleClass().add("image-overlay");
+        overlay.setPrefSize(420, 600);
+        overlay.setClip(createLeftRoundedClip(420, 600));
 
         VBox brandBox = new VBox(8);
         brandBox.setPadding(new Insets(26));
@@ -88,6 +100,14 @@ public class LoginView {
         left.getChildren().addAll(hero, overlay, brandBox);
 
         return left;
+    }
+    
+    // Creates a rectangle with rounded corners on LEFT side only
+    private javafx.scene.shape.Rectangle createLeftRoundedClip(double width, double height) {
+        javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(width, height);
+        clip.setArcWidth(40);  // Rounded corners
+        clip.setArcHeight(40);
+        return clip;
     }
 
     private VBox createRightPanel() {
@@ -161,21 +181,48 @@ public class LoginView {
         String email = safeTrim(emailField.getText());
         String password = passwordField.getText() == null ? "" : passwordField.getText();
 
+        // Debug: Print what was entered
+        System.out.println("=== LOGIN ATTEMPT ===");
+        System.out.println("Email entered: '" + email + "'");
+        System.out.println("Password entered: '" + password + "'");
+        System.out.println("Email length: " + email.length());
+        System.out.println("Password length: " + password.length());
+
         if (email.isEmpty() || password.isEmpty()) {
             statusLabel.setText("Please enter both email and password.");
+            System.out.println("Login failed: Empty fields");
             return;
         }
+
+        // Debug: Print all admins in the system
+        System.out.println("\n=== CHECKING ADMINS IN SYSTEM ===");
+        int adminCount = 0;
+        for (Employee emp : hotel.getAllEmployees()) {
+            System.out.println("Employee: " + emp.getName() + " - " + emp.getClass().getSimpleName());
+            if (emp instanceof Admin) {
+                Admin a = (Admin) emp;
+                adminCount++;
+                System.out.println("  Admin #" + adminCount);
+                System.out.println("  Email: '" + a.getEmail() + "'");
+                System.out.println("  Email match: " + a.getEmail().equalsIgnoreCase(email));
+                System.out.println("  Password verify: " + a.verifyPassword(password));
+            }
+        }
+        System.out.println("Total admins found: " + adminCount);
 
         // Find admin in hotel's employee list
         Admin admin = findAdmin(email, password);
 
         if (admin != null) {
+            System.out.println("Login successful for: " + admin.getName());
             statusLabel.setText("");
             navigator.showDashboard(admin);
         } else {
+            System.out.println("Login failed: No matching admin found");
             statusLabel.setText("Invalid credentials. Please try again.");
             passwordField.clear();
         }
+        System.out.println("===================\n");
     }
 
     private Admin findAdmin(String email, String password) {

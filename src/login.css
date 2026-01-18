@@ -20,9 +20,7 @@
 }
 
 .image-overlay {
-    -fx-background-color: linear-gradient(to bottom, 
-        rgba(13, 27, 62, 0.40), 
-        rgba(13, 27, 62, 0.85));
+    -fx-background-color: rgba(13, 27, 62, 0.50);
 }
 
 .brand-title {
