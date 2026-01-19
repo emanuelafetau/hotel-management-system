@@ -26,12 +26,25 @@ public class SceneNavigator {
         primaryStage.show();
     }
     
+ // ADD THIS METHOD – do not remove existing ones
     public void showDashboard(Admin admin) {
-        // TODO: Create DashboardView
-        System.out.println("Login successful! Welcome, " + admin.getName());
-        System.out.println("Dashboard would be shown here.");
-        
-        // For now, just show a simple message
-        // Later you can create a proper DashboardView
+        DashboardView dashboardView = new DashboardView(hotel, admin);
+
+        Scene scene = new Scene(
+                dashboardView.getRoot(),
+                1100,
+                700
+        );
+
+        // Add dashboard-specific CSS (login CSS stays untouched)
+        scene.getStylesheets().add(
+                getClass().getResource("dashboard.css").toExternalForm()
+        );
+
+        primaryStage.setTitle("Hotel Management System - Dashboard");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
+
+
 }
